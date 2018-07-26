@@ -1,30 +1,27 @@
 'use strict';
 import * as vscode from 'vscode';
-import { FilesService } from './services/service.files';
+import { AngularEntitiesService } from './services/service.angular-entities';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, angular-opener is now active!');
 
     const openComponentCommand = vscode.commands.registerCommand('angular-opener.openComponent', async () => {
-        const filesService = new FilesService();
-        const files = await filesService.getFiles();
-        const options = files.map(f => {
+        const entitiesService = new AngularEntitiesService();
+        const entities = await entitiesService.getEntities();
+        const quickPickOptions = entities.map(e => {
             return {
-                label: f.friendlyName,
-                description: f.uri.fsPath,
+                label: e.friendlyName,
+                description: e.uri.fsPath,
             };
         });
 
         vscode
             .window
-            .showQuickPick(options, { placeHolder: 'Choose a component, service, or directive...', })
-            .then(selectedItem => {
+            .showQuickPick(quickPickOptions, { placeHolder: 'Choose a component, service, or directive...', })
+            .then(async (selectedItem) => {
                 if (selectedItem) {
                     const uri = vscode.Uri.file(selectedItem.description);
-                    vscode
-                        .workspace
-                        .openTextDocument(uri)
-                        .then(yay => console.log('yay', yay), ohno => console.log('oh no', ohno));
+                    await entitiesService.openEntity(uri);
                 }
             });
     });
