@@ -44,28 +44,37 @@ export class AngularEntitiesService {
         // the entity name ends in `.ts` (or possibly `.js` eventually)
         const entityNameWithoutExtension = entityName.substring(0, entityName.length - 3);
 
-        // open the principal entity
-        this.openFileInEditor(entityUri);
-
         // open the template if it exists
-        const templatePath = path.join(entityPath, entityName.replace('.ts', '.html'));
-        if (fs.existsSync(templatePath)) {
-            const templateUri = vscode.Uri.file(templatePath);
-            this.openFileInEditor(templateUri);
-        }
+        const templatePath = path.join(entityPath, `${entityNameWithoutExtension}.html`));
+        await this.openFileInEditor(templatePath);
 
         // open the spec if it exists
-        const specPath = path.join(entityPath, entityName.replace('.ts', '.spec.ts'));
-        if (fs.existsSync(specPath)) {
-            const specUri = vscode.Uri.file(specPath);
-            this.openFileInEditor(specUri);
-        }
+        const specPath = path.join(entityPath, `${entityNameWithoutExtension}.spec.ts`);
+        await this.openFileInEditor(specPath);
+
+        // open various style docs if they exist
+        // TODO: some kind of parsing/regexing the content of the component declaration?
+        await this.openFileInEditor(path.join(entityPath, `${entityNameWithoutExtension}.scss`));
+        await this.openFileInEditor(path.join(entityPath, `${entityNameWithoutExtension}.less`));
+        await this.openFileInEditor(path.join(entityPath, `${entityNameWithoutExtension}.css`));
+        await this.openFileInEditor(path.join(entityPath, `${entityNameWithoutExtension}.sass`));
+
+        // open the principal entity (await this one to ensure it steals focus first)
+        await this.openFileInEditor(entityUri, false);
     }
 
-    async private openFileInEditor(uri) {
+    async private openFileInEditor(uri: vscode.Uri | string, preserveFocus = true) {
+        if (typeof uri === "string") {
+            if (!fs.existsSync(uri)) {
+                return;
+            }
+
+            uri = vscode.Uri.file(uri);
+        }
+
         const doc = await vscode
             .workspace
-            .openTextDocument(uri);
-        await vscode.window.showTextDocument(doc, { preview: false });
+            .openTextDocument(uri as vscode.Uri);
+        await vscode.window.showTextDocument(doc, { preview: false, preserveFocus });
     }
 }
