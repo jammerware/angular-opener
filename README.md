@@ -1,6 +1,6 @@
 # Angular Opener | OPEN SESAME!
 
-Angular Opener is a tiny little itty-bitty extension for Code that makes it convenient to open all of the files (html, ts, css, and so on) that are part of an Angular component. It's admittedly a pretty narrow use-case, but I wanted it, and once I'd written it, it seemed silly not to publish it. I welcome your thoughts on this strange dichotomy which plagues open-source engineers everywhere.
+Angular Opener is a tiny little itty-bitty extension for Code that makes it convenient to open all of the files (html, ts, css, and so on) that are part of an Angular component. It's admittedly a pretty narrow use-case, but I wanted it, and once I'd written it, it seemed silly not to publish it. I welcome your thoughts on this strange conundrum which plagues open-source engineers everywhere.
 
 ## Features
 
